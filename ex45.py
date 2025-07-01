@@ -17,11 +17,14 @@ class 용사(object):
         self.Money = 50          # 돈
         self.Bomb = False        # 폭탄 -> False: 없음 True: 있음
         self.old_key = False     # 열쇠
-        self.Exclibur = False    # 성검 -> True 변환시 공격력 60 상승
+        self.Excalibur = False    # 성검 -> True 변환시 공격력 60 상승
         self.Potion = 1          # 물약 -> 갯수만큼 사용가능, 
                             # 시작 시 1개 가지고 시작
 
-        if self.Exclibur == True:
+    def GearUpdate(self):
+
+        if not self.Excalibur:      # 중복 방지 (한번만 작동하도록 적용)
+            self.Excalibur = True
             self.Attack_Damage += 60
 
 class 상인(object):
@@ -414,7 +417,7 @@ class Lake(stage):
                          """))
             
             # 성검 활성화
-            주인공.Exclibur = True
+            주인공.GearUpdate()
 
         # 요정 돕기 N
         elif 선택 == 'N' or 선택 == 'n':
