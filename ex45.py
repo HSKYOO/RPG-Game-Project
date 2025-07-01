@@ -21,6 +21,9 @@ class 용사(object):
         self.Potion = 1          # 물약 -> 갯수만큼 사용가능, 
                             # 시작 시 1개 가지고 시작
 
+        if self.Exclibur == True:
+            self.Attack_Damage += 60
+
 class 상인(object):
     
     def sell(self):     # 판매
@@ -198,9 +201,6 @@ class forest(stage):
             battle_instance = battle(주인공, 산적)
             result = battle_instance.enter()
 
-            # 사망 시
-            if result == '사망':
-                return '사망'
 
         # 전투 승리 후(battle 객체에서 자연스럽게 내려옴)
 
@@ -364,11 +364,7 @@ class Lake(stage):
                 해골병사 = 스켈레톤()
 
                 battle_instance = battle(주인공, 해골병사)
-                result = battle_instance.enter()
-
-                if result == '사망':
-                    return '사망'
-            
+                result = battle_instance.enter()            
 
             print(dedent(f"""
                          당신은 괴물을 처치했습니다.요정은 나무 뒤에 숨어 이 상황을 지켜보다 안전해졌다싶어
@@ -586,8 +582,6 @@ class Castle_Lower_hall(stage):
                 battle_instance = battle(주인공, 해골병사)
                 result = battle_instance.enter()
 
-                if result == '사망':
-                    return '사망'
 
             print(dedent(f"""
                          검으로 갑옷을 베고, 칼로 투구를 쪼개는 당신은 마치 무신이 환생한 것 마냥 적들을 썰어나갑니다.
@@ -610,8 +604,6 @@ class Castle_Lower_hall(stage):
             타란튤라 = 대왕거미()
             
             return battle(주인공, 타란튤라).enter()
-            # 승리시 
-            return '마왕성_상층'
     
 class Castle_Upper(stage):
     
@@ -650,9 +642,6 @@ class Castle_Upper(stage):
         # 전투
         바알 = 마왕()
         return battle(주인공, 바알).enter()
-
-        # 승리 시 
-        return '엔딩'
 
 # 엔진
 class Engine(object):
@@ -756,7 +745,7 @@ class battle(object):
 
                 select = input("> ")
                 
-                if select == '1':
+                if select == '1' and self.주인공.Potion > 0:
 
                     self.주인공.Potion -= 1
                     self.주인공.hp += 30
@@ -764,6 +753,9 @@ class battle(object):
                     # 회복한 체력은 100을 넘을 수 없다
                     if self.주인공.hp > 100 :
                         self.주인공.hp = 100
+                
+                else:
+                    print("포션이 부족합니다!")
             
             # 잘못 입력 시 다시 while 문 첫줄(상태 창)로 이동
             else:
@@ -809,7 +801,7 @@ class battle(object):
             if self.주인공.hp <= 0 :
                 
                 print("[전투 패배] 당신은 쓰러졌습니다....")
-                return '사망'
+                return death(f'{self.적.이름}')
         
         print("[전투 승리!]")
 
@@ -874,7 +866,6 @@ class Map(object):
         '마왕성_하층_옥상' : Caslte_Lower_Attic(),
         '마왕성_하층_홀' : Castle_Lower_hall(),
         '마왕성_상층' : Castle_Upper(),
-        '사망' : death(),
         '엔딩' : End(),
     } 
 
